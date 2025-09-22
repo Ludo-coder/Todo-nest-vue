@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Todo } from '@prisma/client';
+import { CreateTodoDto } from './dto/create-todo.dto';
 
 @Injectable()
 export class TodosService {
@@ -35,6 +36,34 @@ export class TodosService {
     } catch (e) {
       console.error(
         `An error occured during an finding todo (todoId: ${todoId})`,
+      );
+      throw e;
+    }
+  }
+
+  async create(userId: number, todo: CreateTodoDto): Promise<Todo> {
+    try {
+      const newTodo = await this.prisma.todo.create({
+        data: {
+          ...todo,
+          userId,
+        },
+      });
+      return newTodo;
+    } catch (e) {
+      console.error(`An error occured during a creation of todo`);
+      throw e;
+    }
+  }
+
+  async delete(userId: number, todoId: number): Promise<void> {
+    try {
+      await this.prisma.todo.delete({
+        where: { id: todoId, userId: userId },
+      });
+    } catch (e) {
+      console.error(
+        `An error occured during a deletion of todo (todoId: ${todoId})`,
       );
       throw e;
     }

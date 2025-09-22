@@ -13,6 +13,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Todo } from '@prisma/client';
 import { TodosService } from './todos.service';
+import { CreateTodoDto } from './dto/create-todo.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('todos')
@@ -48,14 +49,14 @@ export class TodosController {
     return todo;
   }
 
-  //   @Post()
-  //   async create(
-  //     @Body() createTodoDto: CreateTodoDto,
-  //   ): Promise<CreateTodoResponse> {
-  // const user = await this.authService.authenticateUser(loginDto);
-  // if (!user) throw new UnauthorizedException('Invalid credentials');
-  // return this.authService.login(user);
-  //   }
+  @Post()
+  async create(
+    @Request() req,
+    @Body() createTodoDto: CreateTodoDto,
+  ): Promise<{ message: string; data: Todo }> {
+    const todo = await this.todosService.create(req.user.userId, createTodoDto);
+    return { message: 'Todo created', data: todo };
+  }
 
   //   @Patch(':id')
   //   async update(
@@ -64,6 +65,12 @@ export class TodosController {
 
   //   }
 
-  //   @Delete(':id')
-  //   async delete()
+  @Delete(':id')
+  async delete(
+    @Request() req,
+    @Param('id') id: string,
+  ): Promise<{ message: string }> {
+    await this.todosService.delete(req.user.userId, Number(id));
+    return { message: 'Todo deleted' };
+  }
 }
