@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginResponse } from './entities/login.interface';
 import { LoginDto } from './dto/login-dto';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../prisma.service';
 import { User } from '@prisma/client';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class AuthService {
   }
 
   login(user: User): LoginResponse {
-    const payload = { email: user.email };
+    const payload = { email: user.email, sub: user.id };
     return new LoginResponse(this.jwtService.sign(payload), user);
   }
 }
