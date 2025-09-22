@@ -6,7 +6,7 @@ import MainLayout from "@/layouts/MainLayout.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "Login",
+    name: "LoginPage",
     component: LoginPage,
   },
   {
@@ -23,13 +23,13 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.VUE_APP_BASE_URL),
+  history: createWebHistory("/"),
   routes,
 });
 
 router.beforeEach((to, _from, next) => {
   const isAuthenticated = Boolean(localStorage.getItem("access_token"));
-  if (to.name !== "/" && !isAuthenticated) next({ name: "/" });
+  if (to.name !== "LoginPage" && !isAuthenticated) next({ name: "LoginPage" });
   else next();
 });
 
