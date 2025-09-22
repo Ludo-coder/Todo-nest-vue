@@ -1,25 +1,14 @@
-export class User {
-  email!: string;
-  password!: string;
+import { User } from '@prisma/client';
 
-  constructor(email: string, password: string) {
-    this.email = email;
-    this.password = password;
-  }
-}
-
-export class LoginPayload {
-  email!: string;
-  password!: string;
-}
+export type SafeUser = Omit<User, 'password'>;
 
 export class LoginResponse {
-  access_token!: string;
-
-  user!: User;
+  access_token: string;
+  user: SafeUser;
 
   constructor(access_token: string, user: User) {
     this.access_token = access_token;
-    this.user = user;
+    const { password, ...safeUser } = user;
+    this.user = safeUser;
   }
 }
