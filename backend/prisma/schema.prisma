@@ -1,3 +1,4 @@
+// Config
 datasource db {
   provider = "sqlite"
   url      = "file:./todolist.db"
@@ -8,10 +9,59 @@ generator client {
   // previewFeatures = []
 }
 
+// Enums
+enum CategoryName {
+  WORK
+  PERSONAL
+  SHOPPING
+  OTHER
+}
+
+enum TodoPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+// Models
+
+/// -------------------------
+///       Users
+/// -------------------------
+model User {
+  id         Int      @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  profileUrl String
+  email      String   @unique
+  password   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  Todo       Todo[]
+}
+
+/// -------------------------
+///       Categories
+/// -------------------------
+model Category {
+  id        Int          @id @default(autoincrement())
+  name      CategoryName @unique
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+/// -------------------------
+///       Todos
+/// -------------------------
 model Todo {
-  id    Int     @id @default(autoincrement())
-  title String  @unique
-  content  String
-  priority String
+  id            Int          @id @default(autoincrement())
+  title         String       @unique
+  content       String
+  priority      TodoPriority
   executionDate DateTime?
+  category      CategoryName
+  userId        Int
+  user          User         @relation(fields: [userId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
