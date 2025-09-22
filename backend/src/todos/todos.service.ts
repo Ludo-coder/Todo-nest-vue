@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Todo } from '@prisma/client';
 import { CreateTodoDto } from './dto/create-todo.dto';
+import { UpdateTodoDto } from './dto/update-todo.dto';
 
 @Injectable()
 export class TodosService {
@@ -52,6 +53,27 @@ export class TodosService {
       return newTodo;
     } catch (e) {
       console.error(`An error occured during a creation of todo`);
+      throw e;
+    }
+  }
+
+  async update(
+    userId: number,
+    todo: UpdateTodoDto,
+    todoId: number,
+  ): Promise<Todo> {
+    try {
+      const updatedTodo = await this.prisma.todo.update({
+        where: { id: todoId, userId: userId },
+        data: {
+          ...todo,
+        },
+      });
+      return updatedTodo;
+    } catch (e) {
+      console.error(
+        `An error occured during updating a todo (todoId: ${todoId})`,
+      );
       throw e;
     }
   }

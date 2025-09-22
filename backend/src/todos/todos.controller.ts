@@ -14,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Todo } from '@prisma/client';
 import { TodosService } from './todos.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
+import { UpdateTodoDto } from './dto/update-todo.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('todos')
@@ -58,12 +59,19 @@ export class TodosController {
     return { message: 'Todo created', data: todo };
   }
 
-  //   @Patch(':id')
-  //   async update(
-  //     @Body() updateTodoDto: UpdateTodoDto,
-  //   ): Promise<UpdateTodoResponse> {
-
-  //   }
+  @Patch(':id')
+  async update(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() updateTodoDto: UpdateTodoDto,
+  ): Promise<{ message: string; data: Todo }> {
+    const updatedTodo = await this.todosService.update(
+      req.user.userId,
+      updateTodoDto,
+      Number(id),
+    );
+    return { message: 'Todo updated', data: updatedTodo };
+  }
 
   @Delete(':id')
   async delete(

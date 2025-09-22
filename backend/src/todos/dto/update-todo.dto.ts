@@ -2,26 +2,27 @@ import { CategoryName, TodoPriority } from '@prisma/client';
 import {
   IsDateString,
   IsEnum,
-  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
 } from 'class-validator';
 
-export class CreateTodoDto {
+export class UpdateTodoDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MaxLength(50)
   title: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MaxLength(256)
   content: string;
 
+  @IsOptional()
   @IsEnum(TodoPriority)
   priority: TodoPriority;
 
+  @IsOptional()
   @IsEnum(CategoryName)
   category: CategoryName;
 
