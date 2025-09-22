@@ -12,8 +12,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Validation
-  app.useGlobalPipes(new ValidationPipe());
-
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
   // Prisma Client Exception Filter for unhandled exceptions
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));

@@ -55,7 +55,7 @@ model Category {
 /// -------------------------
 model Todo {
   id            Int          @id @default(autoincrement())
-  title         String       @unique
+  title         String
   content       String
   priority      TodoPriority
   executionDate DateTime?
