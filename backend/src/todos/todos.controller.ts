@@ -43,7 +43,7 @@ export class TodosController {
 
   @Get(':id')
   async find(@Request() req, @Param('id') id: string): Promise<Todo> {
-    const todo = await this.todosService.find(req.user.userId, id);
+    const todo = await this.todosService.find(req.user.userId, Number(id));
     if (!todo) throw new Error('Todo not found');
     return todo;
   }

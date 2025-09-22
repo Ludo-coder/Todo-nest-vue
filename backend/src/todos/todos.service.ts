@@ -26,7 +26,7 @@ export class TodosService {
     }
   }
 
-  async find(userId: number, todoId): Promise<Todo> {
+  async find(userId: number, todoId: number): Promise<Todo> {
     try {
       const todo = await this.prisma.todo.findFirstOrThrow({
         where: { id: todoId, userId: userId },
