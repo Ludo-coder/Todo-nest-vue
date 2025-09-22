@@ -13,12 +13,10 @@
     "baseUrl": ".",
     "types": [
       "webpack-env",
-      "jest"
-    ],
+      "jest",
+          ],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["./*"]
     },
     "lib": [
       "esnext",

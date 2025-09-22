@@ -10,13 +10,15 @@
   },
   "dependencies": {
     "core-js": "^3.45.1",
-    "vue": "^3.5.21"
+    "vue": "^3.5.21",
+    "vue-router": "4"
   },
   "engines": {
     "node": "22.17.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/webpack-env": "^1.18.8",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vue/cli-plugin-babel": "~5.0.9",
@@ -35,5 +37,6 @@
     "sass": "^1.92.1",
     "sass-loader": "^16.0.5",
     "typescript": "~5.9.2"
-  }
+  },
+  "packageManager": "pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a"
 }
