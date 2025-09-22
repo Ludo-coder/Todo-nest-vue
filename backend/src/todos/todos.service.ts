@@ -25,4 +25,18 @@ export class TodosService {
       throw e;
     }
   }
+
+  async find(userId: number, todoId): Promise<Todo> {
+    try {
+      const todo = await this.prisma.todo.findFirstOrThrow({
+        where: { id: todoId, userId: userId },
+      });
+      return todo;
+    } catch (e) {
+      console.error(
+        `An error occured during an finding todo (todoId: ${todoId})`,
+      );
+      throw e;
+    }
+  }
 }

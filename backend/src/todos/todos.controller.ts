@@ -41,10 +41,14 @@ export class TodosController {
     };
   }
 
-  //   @Get('todos/:id')
-  //   async find()
+  @Get(':id')
+  async find(@Request() req, @Param('id') id: string): Promise<Todo> {
+    const todo = await this.todosService.find(req.user.userId, id);
+    if (!todo) throw new Error('Todo not found');
+    return todo;
+  }
 
-  //   @Post('create')
+  //   @Post()
   //   async create(
   //     @Body() createTodoDto: CreateTodoDto,
   //   ): Promise<CreateTodoResponse> {
@@ -53,13 +57,13 @@ export class TodosController {
   // return this.authService.login(user);
   //   }
 
-  //   @Patch('update/:id')
+  //   @Patch(':id')
   //   async update(
   //     @Body() updateTodoDto: UpdateTodoDto,
   //   ): Promise<UpdateTodoResponse> {
 
   //   }
 
-  //   @Delete('delete/:id')
+  //   @Delete(':id')
   //   async delete()
 }
