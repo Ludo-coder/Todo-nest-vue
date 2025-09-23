@@ -48,7 +48,7 @@
           </div>
           <div class="flex gap-4">
             <button
-              @click="handleDeleteTodo(todo.id)"
+              @click="handleUpdateTodo(todo.id)"
               class="text-blue-600 rounded-md p-1 hover:bg-blue-100"
             >
               <svg
@@ -106,8 +106,47 @@
         <input
           v-model="title"
           placeholder="Nom de la tâche"
-          class="border p-2 rounded w-full mb-4"
+          class="border p-2 rounded w-full"
+          maxlength="49"
         />
+        <p v-if="errors.title" class="text-red-600 text-sm mb-2">
+          {{ errors.title }}
+        </p>
+
+        <textarea
+          v-model="content"
+          placeholder="Description"
+          class="border p-2 rounded w-full resize-none mt-2"
+          maxlength="255"
+        />
+        <p v-if="errors.title" class="text-red-600 text-sm mb-2">
+          {{ errors.content }}
+        </p>
+
+        <div class="flex space-x-2 mb-4 mt-4">
+          <label
+            v-for="p in Object.values(TodoPriority)"
+            :key="p"
+            class="cursor-pointer px-4 py-2 rounded-full border text-sm font-semibold transition"
+            :class="
+              priority === p
+                ? priorityColor(p)
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+            "
+          >
+            <input type="radio" class="hidden" :value="p" v-model="priority" />
+            {{ p }}
+          </label>
+        </div>
+        <select v-model="category" class="border p-2 rounded w-full mb-4">
+          <option
+            v-for="category in Object.values(CategoryName)"
+            :key="category"
+            :value="category"
+          >
+            {{ category }}
+          </option>
+        </select>
         <div class="flex justify-end space-x-2">
           <button
             @click="showModal = false"
@@ -131,21 +170,27 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { useTodos } from "../composables/todos/useTodos";
 import { useRoute } from "vue-router";
-import { TodoPriority } from "../composables/todos/types";
-// import { CategoryName, TodoPriority } from "../composables/todos/types";
+import { CategoryName, TodoPriority } from "../composables/todos/types";
 
 export default defineComponent({
   name: "HomePage",
   setup() {
     const route = useRoute();
-    // const { todos, loading, createTodo, updateTodo, deleteTodo } = useTodos();
-    const { todos, listTodos, deleteTodo } = useTodos();
+    // const { loading, , updateTodo } =
+    //   useTodos();
 
-    // const title: string = ref("");
-    // const content: string = ref("");
-    // const priority: TodoPriority = ref(TodoPriority.LOW);
-    // const category: CategoryName = ref(CategoryName.WORK);
-    // const executionDate: Date | null = ref(null);
+    const { todos, listTodos, deleteTodo, createTodo } = useTodos();
+
+    const title = ref("");
+    const content = ref("");
+    const priority = ref(TodoPriority.LOW);
+    const category = ref(CategoryName.WORK);
+    const executionDate = ref(null);
+    const errors = ref<{
+      title?: string;
+      content?: string;
+    }>({});
+
     const showModal = ref(false);
 
     onMounted(() => {
@@ -154,18 +199,54 @@ export default defineComponent({
       listTodos({ page, limit });
     });
 
-    const handleCreateTodo = () => {
-      //   await createTodo();
+    const handleCreateTodo = async () => {
+      errors.value = {};
+      if (!title.value.trim()) {
+        errors.value.title = "Le titre est requis";
+      }
+      if (!content.value.trim()) {
+        errors.value.content = "La description est requise";
+      }
+
+      if (Object.keys(errors.value).length > 0) {
+        return;
+      }
+
+      await createTodo({
+        category: category.value,
+        content: content.value,
+        priority: priority.value,
+        title: title.value,
+      });
+      title.value = "";
+      content.value = "";
+      priority.value = TodoPriority.LOW;
+      category.value = CategoryName.WORK;
+      executionDate.value = null;
       showModal.value = false;
     };
 
-    const handleUpdateTodo = async () => {
-      //   await updateTodo();
+    const handleUpdateTodo = async (id: number) => {
+      console.log(id);
+      //   await updateTodo(id);
       showModal.value = false;
     };
 
     const handleDeleteTodo = (id: number) => {
       deleteTodo(id);
+    };
+
+    const priorityColor = (p: TodoPriority) => {
+      switch (p) {
+        case TodoPriority.HIGH:
+          return "bg-red-200 text-red-600 border-red-200";
+        case TodoPriority.MEDIUM:
+          return "bg-orange-200 text-orange-600 border-orange-200";
+        case TodoPriority.LOW:
+          return "bg-yellow-200 text-yellow-600 border-yellow-200";
+        default:
+          return "bg-gray-200 text-gray-800 border-gray-200";
+      }
     };
 
     return {
@@ -175,6 +256,14 @@ export default defineComponent({
       showModal,
       handleUpdateTodo,
       TodoPriority,
+      CategoryName,
+      title,
+      content,
+      priority,
+      category,
+      executionDate,
+      priorityColor,
+      errors,
     };
   },
 });

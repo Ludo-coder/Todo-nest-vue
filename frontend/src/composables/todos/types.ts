@@ -28,7 +28,6 @@ export interface ICreateTodo {
   content: string;
   priority: TodoPriority;
   category: CategoryName;
-  executionDate?: Date;
 }
 
 export interface IUpdateTodo {
