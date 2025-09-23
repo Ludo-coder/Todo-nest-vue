@@ -86,6 +86,29 @@
       </li>
     </ul>
 
+    <div class="flex justify-between items-center mt-4">
+      <button
+        :disabled="todos.page <= 1"
+        @click="goToPage(todos.page - 1)"
+        class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+      >
+        Précédent
+      </button>
+
+      <span
+        >Page {{ todos.page }} /
+        {{ Math.ceil(todos.total / todos.limit) }}</span
+      >
+
+      <button
+        :disabled="todos.page >= Math.ceil(todos.total / todos.limit)"
+        @click="goToPage(todos.page + 1)"
+        class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+      >
+        Suivant
+      </button>
+    </div>
+
     <div
       v-if="showModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -165,13 +188,14 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
 import { useTodos } from "../composables/todos/useTodos";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { CategoryName, ITodo, TodoPriority } from "../composables/todos/types";
 
 export default defineComponent({
   name: "HomePage",
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const { todos, listTodos, deleteTodo, createTodo, updateTodo } = useTodos();
 
     const title = ref("");
@@ -265,6 +289,12 @@ export default defineComponent({
       }
     };
 
+    const goToPage = (page: number) => {
+      const query = { ...route.query, page: String(page) };
+      router.push({ query });
+      listTodos({ page, limit: todos.limit });
+    };
+
     return {
       todos,
       handleSaveTodo,
@@ -282,6 +312,7 @@ export default defineComponent({
       errors,
       editingTodo,
       handleFinishTodo,
+      goToPage,
     };
   },
 });
