@@ -2,16 +2,16 @@
 
 Backend de l'application TODO, développé avec **NestJS** et **Prisma** (SQLite).
 
-## 🚀 Prérequis
-
-- Node.js **v22.17.1**
-- pnpm installé globalement (`npm install -g pnpm`)
-
 ## 📦 Installation
 
 Cloner le repo puis installer les dépendances :
 
 - `pnpm install`
+
+Créer un fichier `.env` à la racine du projet avec les variables d'environnement suivantes :
+
+- `JWT_SECRET=secret`
+- `JWT_EXPIRES_IN=3600s`
 
 ## 🚀 Lancement
 
@@ -39,6 +39,10 @@ Frontend de l'application TODO, développé avec **VueJS**.
 Cloner le repo puis installer les dépendances :
 
 - `pnpm install`
+
+Créer un fichier `.env` à la racine du projet avec les variables d'environnement suivantes :
+
+- `VUE_APP_API_URL=http://localhost:3000`
 
 ## 🚀 Lancement
 
