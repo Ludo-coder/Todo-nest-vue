@@ -17,6 +17,7 @@ export class TodosService {
         where: { userId },
         skip: options.skip,
         take: options.take,
+        orderBy: { createdAt: 'desc' },
       });
       const total = await this.prisma.todo.count({ where: { userId } });
       return [data, total];
