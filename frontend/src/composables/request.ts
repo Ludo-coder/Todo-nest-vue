@@ -5,11 +5,18 @@ export const request = async <T>(
   data?: unknown
 ): Promise<T> => {
   try {
+    const token = localStorage.getItem("access_token");
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(url, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: data ? JSON.stringify(data) : undefined,
     });
 
@@ -23,11 +30,11 @@ export const request = async <T>(
     return (await response.json()) as T;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("❌ API Error:", error.message);
+      console.error("❌ Erreur API :", error.message);
       toast.error(error.message);
       throw error;
     }
-    console.error("❌ Unknown API error:", error);
+    console.error("❌ Erreur API :", error);
     toast.error("Erreur lors de la requête");
     throw new Error("Erreur réseau ou inattendue");
   }
