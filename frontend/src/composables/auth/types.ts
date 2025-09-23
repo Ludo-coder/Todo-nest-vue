@@ -1,9 +1,9 @@
-export interface LoginPayload {
+export interface ILoginPayload {
   email: string;
   password: string;
 }
 
-export interface LoginResponse {
+export interface ILoginResponse {
   access_token: string;
   user: {
     id: number;
