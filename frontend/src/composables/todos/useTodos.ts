@@ -58,7 +58,7 @@ export function useTodos() {
     try {
       await request<{ message: string; data: ITodo }>(
         `/todos/${id}`,
-        "PUT",
+        "PATCH",
         todo
       );
       const page = Number(route.query.page ?? 1);

@@ -23,10 +23,7 @@ export const request = async <T>(
     });
 
     if (!response.ok) {
-      let errMessage = "Erreur lors de la requête";
-      const errData = await response.json();
-      errMessage = errData.message || errMessage;
-      throw new Error(errMessage);
+      throw new Error("Erreur lors de la requête");
     }
 
     return (await response.json()) as T;

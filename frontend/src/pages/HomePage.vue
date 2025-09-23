@@ -14,7 +14,10 @@
       <li
         v-for="todo in todos.data"
         :key="todo.id"
-        class="p-2 bg-white rounded-sm shadow flex-column justify-between items-center"
+        :class="[
+          'p-2 rounded-sm shadow flex-column justify-between items-center',
+          todo.executionDate ? 'bg-green-50' : 'bg-white',
+        ]"
       >
         <div class="mb-3">
           <div class="flex justify-between">
@@ -42,48 +45,41 @@
         </div>
         <div class="flex justify-between">
           <div>
-            <span class="px-2 py-1 rounded bg-green-100 text-xs font-semibold">
+            <span
+              class="px-2 py-1 rounded bg-gray-600 text-xs font-semibold text-white"
+            >
               {{ todo.category }}
             </span>
           </div>
-          <div class="flex gap-4">
-            <button
-              @click="handleUpdateTodo(todo.id)"
-              class="text-blue-600 rounded-md p-1 hover:bg-blue-100"
+          <div class="flex gap-1">
+            <span
+              v-if="todo.executionDate"
+              class="px-2 rounded bg-green-100 text-xs font-semibold flex justify-center items-center"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5m-7-7l7 7m0 0L13 5l7 7z"
-                />
-              </svg>
+              Terminé le
+              {{
+                String(todo.executionDate.toLocaleString("fr-FR")).split("T")[0]
+              }}
+            </span>
+            <button
+              v-if="!todo.executionDate"
+              @click="handleFinishTodo(todo.id)"
+              class="text-green-600 rounded-md py-1 px-2 hover:bg-green-100"
+            >
+              Terminer
+            </button>
+            <button
+              v-if="!todo.executionDate"
+              @click="handleUpdateTodo(todo)"
+              class="text-blue-600 rounded-md py-1 px-2 hover:bg-blue-100"
+            >
+              Modifier
             </button>
             <button
               @click="handleDeleteTodo(todo.id)"
-              class="text-red-600 rounded-md p-1 hover:bg-red-100"
+              class="text-red-600 rounded-md py-1 px-2 hover:bg-red-100"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a1 1 0 011 1v1H9V4a1 1 0 011-1z"
-                />
-              </svg>
+              Supprimer
             </button>
           </div>
         </div>
@@ -155,10 +151,10 @@
             Annuler
           </button>
           <button
-            @click="handleCreateTodo"
+            @click="handleSaveTodo"
             class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
           >
-            Ajouter
+            {{ editingTodo ? "Modifier" : "Ajouter" }}
           </button>
         </div>
       </div>
@@ -170,26 +166,24 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { useTodos } from "../composables/todos/useTodos";
 import { useRoute } from "vue-router";
-import { CategoryName, TodoPriority } from "../composables/todos/types";
+import { CategoryName, ITodo, TodoPriority } from "../composables/todos/types";
 
 export default defineComponent({
   name: "HomePage",
   setup() {
     const route = useRoute();
-    // const { loading, , updateTodo } =
-    //   useTodos();
-
-    const { todos, listTodos, deleteTodo, createTodo } = useTodos();
+    const { todos, listTodos, deleteTodo, createTodo, updateTodo } = useTodos();
 
     const title = ref("");
     const content = ref("");
     const priority = ref(TodoPriority.LOW);
     const category = ref(CategoryName.WORK);
-    const executionDate = ref(null);
+    const executionDate = ref<Date | null>(null);
     const errors = ref<{
       title?: string;
       content?: string;
     }>({});
+    const editingTodo = ref<ITodo | null>(null);
 
     const showModal = ref(false);
 
@@ -199,41 +193,63 @@ export default defineComponent({
       listTodos({ page, limit });
     });
 
-    const handleCreateTodo = async () => {
+    const handleSaveTodo = async () => {
       errors.value = {};
-      if (!title.value.trim()) {
-        errors.value.title = "Le titre est requis";
-      }
-      if (!content.value.trim()) {
+      if (!title.value.trim()) errors.value.title = "Le titre est requis";
+      if (!content.value.trim())
         errors.value.content = "La description est requise";
+
+      if (Object.keys(errors.value).length > 0) return;
+
+      if (editingTodo.value) {
+        await updateTodo(editingTodo.value.id, {
+          title: title.value,
+          content: content.value,
+          priority: priority.value,
+          category: category.value,
+          executionDate: executionDate.value,
+        });
+      } else {
+        await createTodo({
+          title: title.value,
+          content: content.value,
+          priority: priority.value,
+          category: category.value,
+        });
       }
 
-      if (Object.keys(errors.value).length > 0) {
-        return;
-      }
-
-      await createTodo({
-        category: category.value,
-        content: content.value,
-        priority: priority.value,
-        title: title.value,
-      });
       title.value = "";
       content.value = "";
       priority.value = TodoPriority.LOW;
       category.value = CategoryName.WORK;
       executionDate.value = null;
+      editingTodo.value = null;
       showModal.value = false;
     };
 
-    const handleUpdateTodo = async (id: number) => {
-      console.log(id);
-      //   await updateTodo(id);
-      showModal.value = false;
+    const handleUpdateTodo = (todo: ITodo) => {
+      title.value = todo.title;
+      content.value = todo.content;
+      priority.value = todo.priority;
+      category.value = todo.category;
+      executionDate.value = todo.executionDate;
+
+      editingTodo.value = todo;
+
+      showModal.value = true;
     };
 
     const handleDeleteTodo = (id: number) => {
       deleteTodo(id);
+    };
+
+    const handleFinishTodo = (id: number) => {
+      const now = new Date();
+      const tzOffset = now.getTimezoneOffset() * 60000;
+      const localDate = new Date(now.getTime() - tzOffset);
+      updateTodo(id, {
+        executionDate: localDate,
+      });
     };
 
     const priorityColor = (p: TodoPriority) => {
@@ -251,7 +267,7 @@ export default defineComponent({
 
     return {
       todos,
-      handleCreateTodo,
+      handleSaveTodo,
       handleDeleteTodo,
       showModal,
       handleUpdateTodo,
@@ -264,6 +280,8 @@ export default defineComponent({
       executionDate,
       priorityColor,
       errors,
+      editingTodo,
+      handleFinishTodo,
     };
   },
 });

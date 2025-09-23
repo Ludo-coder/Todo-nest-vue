@@ -35,5 +35,5 @@ export interface IUpdateTodo {
   content?: string;
   priority?: TodoPriority;
   category?: CategoryName;
-  executionDate?: Date;
+  executionDate: Date | null;
 }
