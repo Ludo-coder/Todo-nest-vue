@@ -7,7 +7,6 @@ async function main() {
   // Effacer toutes les données existantes
   await prisma.user.deleteMany({});
   await prisma.todo.deleteMany({});
-  await prisma.category.deleteMany({});
   console.log('Database cleared.');
 
   console.log('Seeding...');
@@ -39,34 +38,13 @@ async function main() {
     },
   });
 
-  await prisma.category.create({
-    data: {
-      name: 'WORK',
-    },
-  });
-  await prisma.category.create({
-    data: {
-      name: 'PERSONAL',
-    },
-  });
-  await prisma.category.create({
-    data: {
-      name: 'SHOPPING',
-    },
-  });
-  await prisma.category.create({
-    data: {
-      name: 'OTHER',
-    },
-  });
-
   await prisma.todo.create({
     data: {
       title: 'Todo1',
       content: 'lorem ipsum dolor sit amet',
-      priority: 'HIGH',
+      priority: 'HAUT',
       executionDate: new Date('2025-08-01'),
-      category: 'WORK',
+      category: 'TRAVAIL',
       userId: 1,
     },
   });
@@ -74,8 +52,8 @@ async function main() {
     data: {
       title: 'Todo2',
       content: 'lorem ipsum dolor sit amet',
-      priority: 'MEDIUM',
-      category: 'PERSONAL',
+      priority: 'MOYEN',
+      category: 'PERSONNEL',
       userId: 1,
     },
   });
@@ -83,8 +61,8 @@ async function main() {
     data: {
       title: 'Todo3',
       content: 'lorem ipsum dolor sit amet',
-      priority: 'LOW',
-      category: 'OTHER',
+      priority: 'BAS',
+      category: 'AUTRE',
       userId: 1,
     },
   });
@@ -93,8 +71,8 @@ async function main() {
     data: {
       title: 'Todo1',
       content: 'lorem ipsum dolor sit amet',
-      priority: 'HIGH',
-      category: 'WORK',
+      priority: 'HAUT',
+      category: 'TRAVAIL',
       userId: 2,
     },
   });
@@ -102,7 +80,7 @@ async function main() {
     data: {
       title: 'Todo2',
       content: 'lorem ipsum dolor sit amet',
-      priority: 'MEDIUM',
+      priority: 'MOYEN',
       category: 'SHOPPING',
       executionDate: new Date('2025-08-01'),
       userId: 2,
@@ -112,8 +90,8 @@ async function main() {
     data: {
       title: 'Todo3',
       content: 'lorem ipsum dolor sit amet',
-      priority: 'LOW',
-      category: 'OTHER',
+      priority: 'BAS',
+      category: 'AUTRE',
       userId: 2,
     },
   });
@@ -122,8 +100,8 @@ async function main() {
     data: {
       title: 'Todo1',
       content: 'lorem ipsum dolor sit amet',
-      priority: 'HIGH',
-      category: 'WORK',
+      priority: 'HAUT',
+      category: 'TRAVAIL',
       userId: 3,
     },
   });
@@ -131,8 +109,8 @@ async function main() {
     data: {
       title: 'Todo2',
       content: 'lorem ipsum dolor sit amet',
-      priority: 'HIGH',
-      category: 'PERSONAL',
+      priority: 'HAUT',
+      category: 'PERSONNEL',
       userId: 3,
     },
   });
@@ -140,8 +118,8 @@ async function main() {
     data: {
       title: 'Todo3',
       content: 'lorem ipsum dolor sit amet',
-      priority: 'HIGH',
-      category: 'OTHER',
+      priority: 'HAUT',
+      category: 'AUTRE',
       userId: 3,
     },
   });

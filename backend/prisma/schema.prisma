@@ -11,16 +11,16 @@ generator client {
 
 // Enums
 enum CategoryName {
-  WORK
-  PERSONAL
+  TRAVAIL
+  PERSONNEL
   SHOPPING
-  OTHER
+  AUTRE
 }
 
 enum TodoPriority {
-  HIGH
-  MEDIUM
-  LOW
+  HAUT
+  MOYEN
+  BAS
 }
 
 // Models
@@ -38,16 +38,6 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   Todo       Todo[]
-}
-
-/// -------------------------
-///       Categories
-/// -------------------------
-model Category {
-  id        Int          @id @default(autoincrement())
-  name      CategoryName @unique
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
 }
 
 /// -------------------------
