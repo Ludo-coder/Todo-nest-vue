@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { LoginPayload, LoginResponse } from "./types";
+import { ILoginPayload, ILoginResponse } from "./types";
 import { request } from "../request";
 
 export function useAuth() {
@@ -8,13 +8,13 @@ export function useAuth() {
   const loading = ref(false);
 
   const login = async (
-    payload: LoginPayload
-  ): Promise<LoginResponse | void> => {
+    payload: ILoginPayload
+  ): Promise<ILoginResponse | void> => {
     loading.value = true;
 
     try {
-      const data = await request<LoginResponse>(
-        "http://localhost:3000/auth/login",
+      const data = await request<ILoginResponse>(
+        "/auth/login",
         "POST",
         payload
       );

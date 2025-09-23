@@ -1,9 +1,11 @@
 import { toast } from "vue3-toastify";
+import { useAuth } from "./auth/useAuth";
 export const request = async <T>(
   url: string,
   method: string,
   data?: unknown
 ): Promise<T> => {
+  const { logout } = useAuth();
   try {
     const token = localStorage.getItem("access_token");
     const headers: HeadersInit = {
@@ -14,7 +16,7 @@ export const request = async <T>(
       headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(url, {
+    const response = await fetch(`${process.env.VUE_APP_API_URL}${url}`, {
       method,
       headers,
       body: data ? JSON.stringify(data) : undefined,
@@ -30,6 +32,9 @@ export const request = async <T>(
     return (await response.json()) as T;
   } catch (error: unknown) {
     if (error instanceof Error) {
+      if (error.message === "Unauthorized") {
+        logout();
+      }
       console.error("❌ Erreur API :", error.message);
       toast.error(error.message);
       throw error;
